@@ -126,7 +126,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-PRODUCT_SERVICE_URL = 'http://product-service:8000/api/products/'
+PRODUCT_SERVICE_URL = 'http://localhost:8000/api/products/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

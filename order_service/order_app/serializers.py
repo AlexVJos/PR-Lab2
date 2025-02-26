@@ -2,6 +2,10 @@ from rest_framework import serializers
 from .models import Order, OrderItem
 
 class OrderItemSerializer(serializers.ModelSerializer):
+    product_id = serializers.IntegerField()
+    product_name = serializers.CharField()
+    price = serializers.DecimalField(max_digits=10, decimal_places=2)
+    quantity = serializers.IntegerField()
     class Meta:
         model = OrderItem
         fields = ['id', 'product_id', 'product_name', 'price', 'quantity']
@@ -13,12 +17,15 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['id', 'customer_name', 'customer_email', 'status', 'items', 'created_at', 'updated_at']
 
+class OrderItemInputSerializer(serializers.Serializer):
+    product_id = serializers.IntegerField()
+    product_name = serializers.CharField()
+    price = serializers.DecimalField(max_digits=10, decimal_places=2)
+    quantity = serializers.IntegerField()
+
 class OrderCreateSerializer(serializers.ModelSerializer):
-    items = serializers.ListField(
-        child=serializers.DictField(), 
-        write_only=True
-    )
-    
+    items = OrderItemInputSerializer(many=True, write_only=True)
+
     class Meta:
         model = Order
         fields = ['customer_name', 'customer_email', 'items']
