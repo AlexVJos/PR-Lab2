@@ -25,7 +25,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             quantity = item['quantity']
             if not ProductService.check_product_availability(product_id, quantity):
                 return Response(
-                    {"error": f"Недостаточно запасов для продукта {product_id}"},
+                    {"error": f"Product {product_id} is not in stock"},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
