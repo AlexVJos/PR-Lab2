@@ -17,34 +17,23 @@ class OrderViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
-        # Проверяем доступность всех продуктов
-        items = request.data.get('items', [])
+
+        items = serializer.validated_data['items']
+
         for item in items:
-            product_id = item.get('product_id')
-            quantity = item.get('quantity', 1)
-
-            product = ProductService.get_product(product_id)
-            if not product:
-                return Response(
-                    {"error": f"Product with id {product_id} not found"},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
+            product_id = item['product_id']
+            quantity = item['quantity']
             if not ProductService.check_product_availability(product_id, quantity):
                 return Response(
-                    {"error": f"Not enough stock for product {product_id}"},
+                    {"error": f"Недостаточно запасов для продукта {product_id}"},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            
-            item['product_name'] = product['name']
-            item['price'] = product['price']
 
         order = serializer.save()
 
         for item in items:
-            product_id = item.get('product_id')
-            quantity = item.get('quantity', 1)
+            product_id = item['product_id']
+            quantity = item['quantity']
             ProductService.update_product_stock(product_id, quantity)
 
         return Response(
